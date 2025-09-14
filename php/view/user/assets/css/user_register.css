@@ -1,0 +1,87 @@
+        :root {
+            --primary-50: #edf5ff;
+            --primary-100: #d7e8ff;
+            --primary-200: #b9d8ff;
+            --primary-300: #88c0ff;
+            --primary-400: #509eff;
+            --primary-500: #2876ff;
+            --primary-600: #1557ff;
+            --primary-700: #0a3eeb;
+            --primary-800: #0f33be;
+            --primary-900: #133195;
+            --primary-950: #11205a;
+            --primary-DEFAULT: #1557ff;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fa;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .bg-primary-600 {
+            background-color: var(--primary-600);
+        }
+        
+        .text-primary-600 {
+            color: var(--primary-600);
+        }
+        
+        .hover\:text-primary-700:hover {
+            color: var(--primary-700);
+        }
+        
+        .btn-hover-effect:hover {
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+        
+        .register-card {
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+            border: none;
+        }
+        
+        .register-header {
+            background-color: var(--primary-50);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+        
+        .emergency-icon {
+            font-size: 2.5rem !important;
+        }
+
+        .password-toggle {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Mobile-first responsive design */
+        @media (max-width: 576px) {
+            body {
+                font-size: 14px;
+                padding: 1rem;
+            }
+            
+            .emergency-icon {
+                font-size: 2rem !important;
+            }
+            
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h3 {
+                font-size: 1.5rem;
+            }
+        }

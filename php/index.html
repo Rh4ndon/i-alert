@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Emergency Alert System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Open+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="view/user/assets/css/user_login.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card login-card">
+                    <div class="card-header login-header text-center py-4">
+                        <span class="material-symbols-outlined text-primary-600 emergency-icon mb-2">emergency</span>
+                        <h3 class="fw-bold mb-0">Emergency Alert System</h3>
+                        <p class="text-muted mb-0">Sign in to your account</p>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-semibold">Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       placeholder="Enter your email" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="password" class="form-label fw-semibold">Password</label>
+                           
+
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                                    <button type="button" class="input-group-text" onclick="togglePassword('password')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div> 
+                               
+                            </div>
+
+                              <div class="mb-3">
+                                <label for="userType" class="form-label">I am a:</label>
+                                <select class="form-select" id="userType" name="userType">
+                                    <option value="user">Civilian/User</option>
+                                    <option value="ndrrmo">MDRRMO Admin</option>
+                                    <option value="pnp">PNP</option>
+                                    <option value="hospital">Hospital</option>
+                                    <option value="fire">Fire Station</option>
+                                </select>
+                            </div>
+                            
+                         
+                            
+                            <button type="submit" class="btn-login btn btn-primary w-100 py-2 fw-bold btn-hover-effect">
+                                <span class="material-symbols-outlined me-2">login</span>
+                                Sign In
+                            </button>
+                            <div class="text-center mt-4" >
+                                <p>Don't have an account? <a href="user_register.html" >Register here</a></p>
+                            </div>
+                       
+                        </form>
+                    </div>
+                </div>
+                
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="view/user/assets/js/show-alert.js"></script>
+
+    <script>
+        var userType = localStorage.getItem('userType');
+        if (userType === 'user') {
+            window.location.href = 'view/user/user.html?msg=You are already logged in';
+        } else if (userType === 'ndrrmo') {
+            window.location.href = 'view/ndrrmo/reports.html?msg=You are already logged in';
+        } else if (userType === 'pnp') {
+            window.location.href = 'view/pnp/emergency-alerts.html?msg=You are already logged in';
+        } else if (userType === 'hospital') {
+            window.location.href = 'view/hospital/emergency-alerts.html?msg=You are already logged in';
+        } else if (userType === 'fire') {
+            window.location.href = 'view/fire/emergency-alerts.html?msg=You are already logged in';
+        }
+
+        if (userType && typeof AndroidBridge !== 'undefined') {
+            AndroidBridge.setUserType(userType);
+            console.log('UserType sent to Android:', userType);
+        }
+        function togglePassword(fieldId) {
+                const passwordInput = document.getElementById(fieldId);
+                const eyeIcon = event.currentTarget.querySelector('i');
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeIcon.classList.remove('bi-eye');
+                    eyeIcon.classList.add('bi-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    eyeIcon.classList.remove('bi-eye-slash');
+                    eyeIcon.classList.add('bi-eye');
+                }
+            }
+
+
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+
+            simulateLogin();
+        });
+
+        function simulateLogin() {
+            const loginBtn = document.querySelector('.btn-login');
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Signing in...';
+            loginBtn.disabled = true;
+
+            const formData = new FormData(document.getElementById('loginForm'));
+            
+ 
+             fetch('controllers/login.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => {
+                try {
+                    const data = JSON.parse(result);
+                    if (data.success) {
+                        localStorage.setItem('user_id', data.user_id);
+                        localStorage.setItem('first_name', data.first_name);
+                        localStorage.setItem('last_name', data.last_name);
+                        localStorage.setItem('email', data.email);
+                        localStorage.setItem('is_active', data.is_active);
+                        localStorage.setItem('is_logged_in', true);
+                        localStorage.setItem('userType', data.userType);
+                        loginBtn.innerHTML = originalText;
+                        var userType = localStorage.setItem('userType', data.userType);
+                        if (userType && typeof AndroidBridge !== 'undefined') {
+                            AndroidBridge.setUserType(userType);
+                            console.log('UserType sent to Android:', userType);
+                        }
+                        loginBtn.disabled = false;
+                        if (data.userType === 'user') {
+                            window.location.href = 'view/user/user.html?msg=' + encodeURIComponent(data.message);
+                        } else if (data.userType === 'ndrrmo') {
+                            window.location.href = 'view/ndrrmo/reports.html?msg=' + encodeURIComponent(data.message);
+                        } else if (data.userType === 'pnp') {
+                            window.location.href = 'view/pnp/emergency-alerts.html?msg=' + encodeURIComponent(data.message);
+                        } else if (data.userType === 'hospital') {
+                            window.location.href = 'view/hospital/emergency-alerts.html?msg=' + encodeURIComponent(data.message);
+                        } else if (data.userType === 'fire') {
+                            window.location.href = 'view/fire/emergency-alerts.html?msg=' + encodeURIComponent(data.message);
+                        }
+                        
+                        
+                    } else if (data.error) {
+                        loginBtn.innerHTML = 'Sign In';
+                        loginBtn.disabled = false;
+                        showAlert(data.error, 'danger');
+                    } else {
+                        console.error('Unexpected response:', data);
+                    }
+                } catch (error) {
+                    console.error('Error parsing response:', error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+            
+            
+        }
+
+        // Add spin animation for loading
+        const style = document.createElement('style');
+        style.textContent = `
+            .spin {
+                animation: spin 1s linear infinite;
+            }
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

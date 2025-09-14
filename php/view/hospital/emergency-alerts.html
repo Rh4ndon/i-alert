@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Alerts - PNP Dashboard</title>
+    
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/emergency-alerts.css">
+    
+<style>
+      /* Alarm indicator styles */
+        .alarm-indicator {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: linear-gradient(45deg, #ff4444, #ffaa00);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.4);
+            animation: pulse 1s infinite;
+            z-index: 9999;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+
+         .badge-fire { background-color:#f15539; color: rgb(255, 255, 255); }
+        .badge-accident { background-color: #fd7e14; color: white; }
+        .badge-crime { background-color: #6f42c1; color: white; }
+        .badge-medical { background-color: #d63384; color: white; }
+        .badge-natural-disaster { background-color: #20c997; color: white; }
+        .badge-others { background-color: var(--secondary-color); color: white; }
+        .badge-pending { background-color: var(--warning-color); color: black; }
+        .badge-responded { background-color: var(--primary-color); color: white; }
+        .badge-resolved { background-color: var(--success-color); color: white; }
+        .badge-forwarded { background-color: #6f42c1; color: white; }
+</style>
+</head>
+<body>
+
+      <!-- Alarm Indicator -->
+    <div id="alarmIndicator" class="alarm-indicator">
+        🚨 New Emergency Alert!
+    </div>
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white fw-bold d-flex align-items-center" href="emergency-alerts.html">
+                <img src="assets/img/hospital.png" alt="Hospital Logo" width="32" height="40" class="me-2">
+                Hospital
+            </a>
+
+            <div class="d-flex justify-content-end">
+                <!-- Notification -->
+                <button class="btn btn-light btn-sm rounded-circle position-relative"
+                        data-bs-toggle="modal" data-bs-target="#notificationModal">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <span class="notification-badge"></span>
+                </button>
+                &nbsp;&nbsp;
+
+                <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                    <span class="material-symbols-outlined">logout</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid py-4 main-content">
+        <!-- Search and Filter Section -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 search-filter-container">
+            <h2 class="fw-bold text-dark mb-3 mb-md-0">Emergency Alerts</h2>
+            
+            <div class="d-flex flex-column flex-sm-row gap-3 filter-controls">
+                <div class="search-box">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" class="form-control" placeholder="Search alerts..." style="min-width: 250px;">
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                        <span class="material-symbols-outlined me-2">filter_list</span>
+                        Filter
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end p-3 filter-dropdown" style="min-width: 280px;">
+                        <div class="mb-3">
+                            <h6 class="fw-semibold mb-2">Alert Type</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filterAccident" checked>
+                                <label class="form-check-label" for="filterAccident">Accident</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filterFire" checked>
+                                <label class="form-check-label" for="filterFire">Fire</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filterMedical" checked>
+                                <label class="form-check-label" for="filterMedical">Medical</label>
+                            </div>
+                            <!--div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filterCrime" checked>
+                                <label class="form-check-label" for="filterCrime">Crime</label>
+                            </!--div-->
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filterNaturalDisaster" checked>
+                                <label class="form-check-label" for="filterNaturalDisaster">Natural Disaster</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6 class="fw-semibold mb-2">Status</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filterNew" checked>
+                                <label class="form-check-label" for="filterNew">New</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filterProgress" checked>
+                                <label class="form-check-label" for="filterProgress">In Progress</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="filterResolved">
+                                <label class="form-check-label" for="filterResolved">Resolved</label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-secondary flex-fill">Clear</button>
+                            <button class="btn btn-sm btn-primary flex-fill">Apply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Cards -->
+        <div class="row g-4 mb-4">
+            <!-- Car Accident Alert -->
+            <div class="col-lg-6 col-xl-4">
+                <div class="card alert-card h-100">
+                    <span class="alert-type-badge badge-accident text-white">Accident</span>
+                    <div class="card-body pt-5">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title fw-semibold">Car Accident on Main Road</h5>
+                            <span class="status-badge status-new">New</span>
+                        </div>
+                        
+                        <p class="text-muted small mb-2">Reported by: maria.santos@example.com</p>
+                        <p class="text-dark mb-3">Two vehicles collided at the intersection. There are injured people.</p>
+                        
+                        <div class="location-info mb-3">
+                            <div class="d-flex align-items-center">
+                                <span class="material-symbols-outlined text-danger me-2">location_on</span>
+                                <small class="text-dark">Location: 14.5995° N, 120.9842° E</small>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons d-grid gap-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#alertDetailModal">
+                                Action
+                            </button>
+                              <button class="btn btn-outline-secondary">
+                                <span class="material-symbols-outlined me-1">map</span>
+                                View Map
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Building Fire Alert -->
+            <div class="col-lg-6 col-xl-4">
+                <div class="card alert-card h-100">
+                    <span class="alert-type-badge badge-fire text-white">Fire</span>
+                    <div class="card-body pt-5">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title fw-semibold">Building Fire on East Street</h5>
+                            <span class="status-badge status-progress">In Progress</span>
+                        </div>
+                        
+                        <p class="text-muted small mb-2">Reported by: james.wilson@example.com</p>
+                        <p class="text-dark mb-3">Commercial building caught fire. Fire trucks already dispatched.</p>
+                        
+                        <div class="location-info mb-3">
+                            <div class="d-flex align-items-center">
+                                <span class="material-symbols-outlined text-danger me-2">location_on</span>
+                                <small class="text-dark">Location: 14.6024° N, 120.9821° E</small>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons d-grid gap-2">
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#alertDetailModal">
+                                View Updates
+                            </button>
+                              <button class="btn btn-outline-secondary">
+                                <span class="material-symbols-outlined me-1">map</span>
+                                View Map
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medical Emergency Alert -->
+            <div class="col-lg-6 col-xl-4">
+                <div class="card alert-card h-100">
+                    <span class="alert-type-badge badge-medical text-white">Medical</span>
+                    <div class="card-body pt-5">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title fw-semibold">Medical Emergency at Central Park</h5>
+                            <span class="status-badge status-new">New</span>
+                        </div>
+                        
+                        <p class="text-muted small mb-2">Reported by: alex.chen@example.com</p>
+                        <p class="text-dark mb-3">Elderly person collapsed. Need immediate medical assistance.</p>
+                        
+                        <div class="location-info mb-3">
+                            <div class="d-flex align-items-center">
+                                <span class="material-symbols-outlined text-danger me-2">location_on</span>
+                                <small class="text-dark">Location: 14.5982° N, 120.9863° E</small>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons d-grid gap-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#alertDetailModal">
+                                Action
+                            </button>
+                              <button class="btn btn-outline-secondary">
+                                <span class="material-symbols-outlined me-1">map</span>
+                                View Map
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           
+
+
+            <div class="col-lg-6 col-xl-4">
+                <div class="card alert-card h-100">
+                    <span class="alert-type-badge badge-accident text-white">Accident</span>
+                    <div class="card-body pt-5">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title fw-semibold">Motorcycle Accident on Highway</h5>
+                            <span class="status-badge status-new">New</span>
+                        </div>
+                        
+                        <p class="text-muted small mb-2">Reported by: highway.patrol@pnp.gov</p>
+                        <p class="text-dark mb-3">Single motorcycle accident with rider down. Traffic being redirected.</p>
+                        
+                        <div class="location-info mb-3">
+                            <div class="d-flex align-items-center">
+                                <span class="material-symbols-outlined text-danger me-2">location_on</span>
+                                <small class="text-dark">Location: 14.6105° N, 120.9755° E</small>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons d-grid gap-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#alertDetailModal">
+                                Action
+                            </button>
+                              <button class="btn btn-outline-secondary">
+                                <span class="material-symbols-outlined me-1">map</span>
+                                View Map
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    <!-- Alert Detail Modal -->
+    <div class="modal fade alert-detail-modal" id="alertDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <div class="d-flex align-items-center">
+                        <span class="badge badge-accident text-white me-3">Accident</span>
+                        <h5 class="modal-title fw-semibold">Car Accident on Main Road</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="row g-4">
+                        <div class="col-md-8">
+                            <div class="mb-4">
+                                <h6 class="fw-semibold mb-2">Incident Details</h6>
+                                <p class="text-dark">Two vehicles collided at the intersection of Main Road and First Street. There are multiple injured people requiring immediate medical attention. Traffic is severely congested in the area.</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h6 class="fw-semibold mb-3">Timeline</h6>
+                                <div class="timeline">
+                                    <div class="d-flex mb-3">
+                                        <div class="flex-shrink-0">
+                                            <span class="badge bg-primary rounded-pill">New</span>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <p class="mb-1 small fw-semibold">Report received</p>
+                                            <p class="mb-0 small text-muted">2 minutes ago</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card bg-light border-0">
+                                <div class="card-body">
+                                    <h6 class="fw-semibold mb-3">Report Information</h6>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block">Reporter</small>
+                                        <span class="fw-medium">Maria Clara</span>
+                                        <span class="fw-medium">09978456123</span>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block">Status</small>
+                                        <span class="status-badge status-new">Approve</span>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block">Location</small>
+                                        <div class="d-flex align-items-center">
+                                            <span class="material-symbols-outlined text-danger me-2 small">location_on</span>
+                                            <small>14.5995° N, 120.9842° E</small>
+                                        </div>
+                                    </div>
+                                    
+                                
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button> 
+                    <button type="button" class="btn btn-danger">Decline</button>
+                    <button type="button" class="btn btn-primary">Accept Response</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <span class="material-symbols-outlined me-2">notifications</span>
+                        Notifications
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item border-0 px-0">
+                            <div class="d-flex align-items-start">
+                                <span class="material-symbols-outlined text-danger me-3 mt-1">crisis_alert</span>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">New Emergency Alert</h6>
+                                    <p class="mb-1 text-muted small">Car accident reported on Main Road</p>
+                                    <small class="text-muted">2 minutes ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0">
+                            <div class="d-flex align-items-start">
+                                <span class="material-symbols-outlined text-warning me-3 mt-1">local_fire_department</span>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Fire Alert Update</h6>
+                                    <p class="mb-1 text-muted small">Building fire on East Street - In Progress</p>
+                                    <small class="text-muted">15 minutes ago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0">
+                            <div class="d-flex align-items-start">
+                                <span class="material-symbols-outlined text-success me-3 mt-1">medical_services</span>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Medical Emergency</h6>
+                                    <p class="mb-1 text-muted small">Elderly person collapsed at Central Park</p>
+                                    <small class="text-muted">30 minutes ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary btn-sm">Mark All Read</button>
+                    <button type="button" class="btn btn-primary btn-sm">View All Alerts</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav d-lg-none">
+        <div class="container-fluid">
+        <div class="d-flex justify-content-around">
+            <a href="emergency-alerts.html" class="nav-item active">
+            <span class="material-symbols-outlined">crisis_alert</span>
+            <span>Alerts</span>
+            </a>
+            <!--a href="unresolved.html" class="nav-item active">
+            <span class="material-symbols-outlined">pending_actions</span>
+            <span>Cases</span>
+            </!--a-->
+            <a href="history.html" class="nav-item">
+            <span class="material-symbols-outlined">history</span>
+            <span>History</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+            <span class="material-symbols-outlined">person</span>
+            <span>Profile</span>
+            </a>
+        </div>
+        </div>
+    </nav>
+
+        <!-- Logout Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Logout</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to logout?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+  <!-- Bootstrap 5.3 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Leaflet CSS (you forgot this!) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Leaflet Routing Machine CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+
+<!-- Leaflet Routing Machine JS -->
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+<!-- Your other scripts -->
+<script src="assets/js/show-alert.js"></script>
+<script src="assets/js/show-alert.js"></script>
+
+  <!-- Audio elements for alarm sounds -->
+    <audio id="alarmSound" preload="auto">
+        <source src="assets/alarm.mp3" type="audio/mpeg">
+        <source src="assets/alarm.wav" type="audio/wav">
+        <source src="assets/alarm.ogg" type="audio/ogg">
+        <!-- Fallback: Create alarm sound using Web Audio API if no files available -->
+    </audio>
+   
+    <script>
+
+ 
+
+// Define emergency types mapping
+const emergencyTypes = {
+    1: { name: 'Fire', badgeClass: 'badge-fire' },
+    2: { name: 'Accident', badgeClass: 'badge-accident' },
+    3: { name: 'Crime', badgeClass: 'badge-crime' },
+    4: { name: 'Medical', badgeClass: 'badge-medical' },
+    5: { name: 'Natural Disaster', badgeClass: 'badge-natural-disaster' },
+    6: { name: 'Other', badgeClass: 'badge-other' }
+};
+
+// Define status mapping for display
+const statusDisplay = {
+    'pending': 'New',
+    'on_going': 'In Progress',
+    'approved': 'Approved',
+    'rejected': 'Rejected',
+    'unsolved': 'Unresolved',
+    'responded': 'Responded'
+};
+
+// Define status badge classes
+const statusBadgeClasses = {
+    'pending': 'status-new',
+    'on_going': 'status-progress',
+    'approved': 'status-new',
+    'rejected': 'status-resolved',
+    'unsolved': 'status-resolved',
+    'responded': 'status-resolved'
+};
+
+// Global variable to store emergencies data
+let emergenciesData = [];
+let mapModalInstance = null;
+let currentMap = null;
+let userLocationMarker = null;
+let emergencyLocationMarker = null;
+let routeLine = null;
+let routingControl = null;
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    loadEmergencies();
+    
+    // Set up modal event listeners
+    const alertDetailModal = document.getElementById('alertDetailModal');
+    alertDetailModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const emergencyId = button.getAttribute('data-emergency-id');
+        populateModal(emergencyId);
+    });
+    
+    // Set up map modal
+    setupMapModal();
+});
+
+// Function to load emergencies from the server
+async function loadEmergencies() {
+    try {
+        const response = await fetch('../../controllers/get_department_emergency.php');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            // Filter for approved status (for PNP page)
+            emergenciesData = data.data.filter(emergency => (emergency.status === 'approved' || emergency.status === 'on_going') && emergency.emergency_type_id !== '3');
+            renderEmergencies(emergenciesData);
+        } else {
+            console.error('Error loading emergencies:', data.error);
+            showAlert('Failed to load emergencies', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showAlert('Network error occurred', 'error');
+    }
+}
+
+// Function to render emergencies on the page
+function renderEmergencies(emergencies) {
+    const container = document.querySelector('.row.g-4.mb-4');
+    container.innerHTML = ''; // Clear existing cards
+    
+    if (emergencies.length === 0) {
+        container.innerHTML = '<div class="col-12"><div class="alert alert-info">No approved emergencies found.</div></div>';
+        return;
+    }
+    
+    emergencies.forEach(emergency => {
+        const card = createEmergencyCard(emergency);
+        container.appendChild(card);
+    });
+}
+
+// Function to create an emergency card
+function createEmergencyCard(emergency) {
+    const col = document.createElement('div');
+    col.className = 'col-lg-6 col-xl-4';
+    
+    const emergencyType = emergencyTypes[emergency.emergency_type_id] || { name: 'Other', badgeClass: 'badge-other' };
+    const statusText = statusDisplay[emergency.status] || emergency.status;
+    const badgeClass = statusBadgeClasses[emergency.status] || 'status-new';
+    
+    // Determine button text and class based on status
+    let actionBtnText = 'Actions';
+    let actionBtnClass = 'btn-primary';
+    let actionBtnAction = '';
+    
+    if (emergency.status === 'on_going') {
+        actionBtnText = 'View Updates';
+        actionBtnClass = 'btn-warning';
+        //actionBtnAction = 'accept';
+    } else if (emergency.status === 'responded' || emergency.status === 'unsolved') {
+        actionBtnText = 'Completed';
+        actionBtnClass = 'btn-success';
+        //actionBtnAction = 'none';
+    }
+    
+    const hasCoordinates = emergency.latitude && emergency.longitude;
+    const locationText = hasCoordinates ? 
+        `Location: ${emergency.latitude}° N, ${emergency.longitude}° E` : 
+        `Address: ${emergency.address || 'Not specified'}`;
+    
+    col.innerHTML = `
+        <div class="card alert-card h-100">
+            <span class="alert-type-badge ${emergencyType.badgeClass} text-white">${emergencyType.name}</span>
+            <div class="card-body pt-5">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title fw-semibold">${emergency.title}</h5>
+                    <span class="status-badge ${badgeClass}">${statusText}</span>
+                </div>
+                
+                <p class="text-muted small mb-2">Reported by: ${emergency.user}</p>
+                <p class="text-dark mb-3">${emergency.description}</p>
+                
+                <div class="location-info mb-3">
+                    <div class="d-flex align-items-center">
+                        <span class="material-symbols-outlined text-danger me-2">location_on</span>
+                        <small class="text-dark">${locationText}</small>
+                    </div>
+                </div>
+                
+                <div class="action-buttons d-grid gap-2">
+                    <button class="btn ${actionBtnClass}" data-emergency-id="${emergency.id}" data-action="${actionBtnAction}" data-bs-toggle="modal" data-bs-target="#alertDetailModal">
+                        ${actionBtnText}
+                    </button>
+                    <button class="btn btn-outline-secondary view-map-btn" data-emergency-id="${emergency.id}" ${!hasCoordinates ? 'disabled' : ''}>
+                        <span class="material-symbols-outlined me-1">map</span>
+                        View Map
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add event listener to the action button
+    const actionBtn = col.querySelector(`[data-emergency-id="${emergency.id}"][data-action]`);
+    actionBtn.addEventListener('click', function() {
+        handleActionButtonClick(emergency.id, this.getAttribute('data-action'));
+    });
+    
+    // Add event listener to the view map button
+    const viewMapBtn = col.querySelector('.view-map-btn');
+    viewMapBtn.addEventListener('click', function() {
+        if (!hasCoordinates) return;
+        showEmergencyMap(emergency.id);
+    });
+    
+    return col;
+}
+
+// Function to handle action button clicks
+function handleActionButtonClick(emergencyId, action) {
+    if (action === 'accept') {
+        // Update status to on_going
+        updateEmergencyStatus(emergencyId, 'on_going');
+    }
+    // For 'view' and 'none', just show the modal which is already handled
+}
+
+
+// Function to update emergency status
+async function updateEmergencyStatus(emergencyId, newStatus) {
+    try {
+        const response = await fetch(`../../controllers/actions.php?action=${newStatus}&id=${emergencyId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Refresh the emergencies list
+            loadEmergencies();
+            showAlert('Emergency status updated successfully', 'success');
+        } else {
+            showAlert('Failed to update emergency status', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showAlert('Network error occurred', 'error');
+    }
+}
+
+// Function to populate the modal with emergency details
+function populateModal(emergencyId) {
+    const emergency = emergenciesData.find(e => e.id === emergencyId);
+    if (!emergency) return;
+    
+    const modal = document.getElementById('alertDetailModal');
+    const emergencyType = emergencyTypes[emergency.emergency_type_id] || { name: 'Other', badgeClass: 'badge-other' };
+    const statusText = statusDisplay[emergency.status] || emergency.status;
+    
+    // Update modal header
+    modal.querySelector('.badge').className = `badge ${emergencyType.badgeClass} text-white`;
+    modal.querySelector('.badge').textContent = emergencyType.name;
+    modal.querySelector('.modal-title').textContent = emergency.title;
+    
+    // Update incident details
+    modal.querySelector('.modal-body p.text-dark').textContent = emergency.description;
+    
+    // Update timeline (you might want to enhance this with actual timeline data)
+    const timelineDiv = modal.querySelector('.timeline');
+    timelineDiv.innerHTML = `
+        <div class="d-flex mb-3">
+            <div class="flex-shrink-0">
+                <span class="badge bg-primary rounded-pill">Reported</span>
+            </div>
+            <div class="flex-grow-1 ms-3">
+                <p class="mb-1 small fw-semibold">Report received</p>
+                <p class="mb-0 small text-muted">${emergency.time}</p>
+            </div>
+        </div>
+    `;
+    
+    // Update report information
+    modal.querySelector('.modal-body .fw-medium:nth-of-type(1)').textContent = emergency.user;
+    modal.querySelector('.modal-body .fw-medium:nth-of-type(2)').textContent = emergency.user_phone;
+    modal.querySelector('.status-badge').className = `status-badge ${statusBadgeClasses[emergency.status] || 'status-new'}`;
+    modal.querySelector('.status-badge').textContent = statusText;
+    
+    // Update location
+    const hasCoordinates = emergency.latitude && emergency.longitude;
+    const locationText = hasCoordinates ? 
+        `${emergency.latitude}° N, ${emergency.longitude}° E` : 
+        `${emergency.address || 'Not specified'}`;
+    //modal.querySelector('.modal-body small.text-dark').textContent = locationText;
+    
+    // Update footer buttons based on status
+    const footer = modal.querySelector('.modal-footer');
+    const declineBtn = footer.querySelector('.btn-danger');
+    const acceptBtn = footer.querySelector('.btn-primary');
+    
+    if (emergency.status === 'approved') {
+        declineBtn.textContent = 'Reject';
+        acceptBtn.textContent = 'Accept Response';
+        acceptBtn.onclick = () => {
+            updateEmergencyStatus(emergencyId, 'on_going');
+            bootstrap.Modal.getInstance(modal).hide();
+        };
+        declineBtn.onclick = () => {
+            updateEmergencyStatus(emergencyId, 'unsolved');
+            bootstrap.Modal.getInstance(modal).hide();
+        };
+        declineBtn.style.display = 'none';
+        acceptBtn.style.display = 'block';
+    } else if (emergency.status === 'on_going') {
+        declineBtn.textContent = 'Mark as Unresolved';
+        acceptBtn.textContent = 'Mark as Responded';
+        acceptBtn.onclick = () => {
+            updateEmergencyStatus(emergencyId, 'responded');
+            bootstrap.Modal.getInstance(modal).hide();
+        };
+        declineBtn.onclick = () => {
+            updateEmergencyStatus(emergencyId, 'unsolved');
+            bootstrap.Modal.getInstance(modal).hide();
+        };
+        declineBtn.style.display = 'none';
+        acceptBtn.style.display = 'block';
+    } else {
+        // For responded or unsolved, hide action buttons
+        declineBtn.style.display = 'none';
+        acceptBtn.style.display = 'none';
+    }
+}
+
+// Function to setup the map modal
+function setupMapModal() {
+    // Create map modal HTML
+    const mapModalHTML = `
+        <div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mapModalLabel">Emergency Location</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="emergencyMap" style="height: 400px; width: 100%;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add map modal to body
+    document.body.insertAdjacentHTML('beforeend', mapModalHTML);
+    
+    // Initialize modal instance
+    const mapModalElement = document.getElementById('mapModal');
+    mapModalInstance = new bootstrap.Modal(mapModalElement);
+    
+    // Add event listener for when modal is shown
+    mapModalElement.addEventListener('shown.bs.modal', function() {
+        if (currentMap) {
+            currentMap.invalidateSize();
+        }
+    });
+}
+
+// Function to show emergency map
+function showEmergencyMap(emergencyId) {
+    const emergency = emergenciesData.find(e => e.id === emergencyId);
+    if (!emergency || !emergency.latitude || !emergency.longitude) return;
+    
+    // Show the map modal
+    mapModalInstance.show();
+    
+    // Initialize or update the map
+    setTimeout(() => {
+        initMap(emergency);
+    }, 100);
+}
+
+
+// Function to initialize the map with Leaflet and real routing
+function initMap(emergency) {
+    // Convert string coordinates to numbers
+    const lat = parseFloat(emergency.latitude);
+    const lng = parseFloat(emergency.longitude);
+    
+    // Initialize the map
+    if (currentMap) {
+        currentMap.remove();
+    }
+    
+    currentMap = L.map('emergencyMap').setView([lat, lng], 20);
+    
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(currentMap);
+    
+    // Add emergency location marker
+    if (emergencyLocationMarker) {
+        currentMap.removeLayer(emergencyLocationMarker);
+    }
+    
+    emergencyLocationMarker = L.marker([lat, lng])
+        .addTo(currentMap)
+        .bindPopup(`<b>Emergency Location</b><br>${emergency.title}<br>${emergency.description}`)
+        .openPopup();
+    
+    // Get user's current location
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                
+                // Add user location marker
+                if (userLocationMarker) {
+                    currentMap.removeLayer(userLocationMarker);
+                }
+                
+                userLocationMarker = L.marker([userLat, userLng], {
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                })
+                .addTo(currentMap)
+                .bindPopup('Your Location')
+                .openPopup();
+                
+                // Fit bounds to show both markers
+                const bounds = L.latLngBounds([
+                    [lat, lng],
+                    [userLat, userLng]
+                ]);
+                currentMap.fitBounds(bounds);
+
+                // 🚗 Replace straight line with REAL ROUTING using Leaflet Routing Machine
+                if (routingControl) {
+                    currentMap.removeControl(routingControl);
+                }
+
+                routingControl = L.Routing.control({
+                    waypoints: [
+                        L.latLng(userLat, userLng),     // Start: User location
+                        L.latLng(lat, lng)              // End: Emergency location
+                    ],
+                    routeWhileDragging: false,
+                    showAlternatives: false,
+                    fitSelectedRoutes: true,
+                    show: false, // hides the default itinerary panel
+                    lineOptions: {
+                        styles: [{ color: '#007bff', weight: 5, opacity: 0.7 }]
+                    },
+                    createMarker: function(i, waypoint, n) {
+                        // Don't add extra markers — we already have custom ones
+                        return null;
+                    }
+                }).addTo(currentMap);
+
+            },
+            function(error) {
+                console.error("Error getting user location:", error);
+                currentMap.setView([lat, lng], 13);
+                showAlert('Could not get your location. Enable location services for routing.', 'warning');
+            }
+        );
+    } else {
+        // Geolocation not supported
+        currentMap.setView([lat, lng], 13);
+        showAlert('Geolocation is not supported by your browser.', 'warning');
+    }
+}
+
+
+// Search functionality
+document.querySelector('.search-box input').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    const filteredEmergencies = emergenciesData.filter(emergency => {
+        const title = emergency.title.toLowerCase();
+        const description = emergency.description.toLowerCase();
+        const user = emergency.user.toLowerCase();
+        
+        return title.includes(searchTerm) || 
+               description.includes(searchTerm) || 
+               user.includes(searchTerm);
+    });
+    
+    renderEmergencies(filteredEmergencies);
+});
+
+// Filter functionality
+function applyFilters() {
+    const typeFilters = {
+        accident: document.getElementById('filterAccident').checked,
+        fire: document.getElementById('filterFire').checked,
+        medical: document.getElementById('filterMedical').checked,
+        crime: document.getElementById('filterCrime').checked,
+        'natural disaster': document.getElementById('filterNaturalDisaster').checked
+    };
+    
+    const statusFilters = {
+        new: document.getElementById('filterNew').checked,
+        progress: document.getElementById('filterProgress').checked,
+        resolved: document.getElementById('filterResolved').checked
+    };
+    
+    const filteredEmergencies = emergenciesData.filter(emergency => {
+        // Get emergency type
+        const emergencyType = emergencyTypes[emergency.emergency_type_id];
+        const typeName = emergencyType ? emergencyType.name.toLowerCase() : '';
+        
+        // Get status for filtering
+        let statusForFilter = '';
+        if (emergency.status === 'pending' || emergency.status === 'approved') {
+            statusForFilter = 'new';
+        } else if (emergency.status === 'on_going') {
+            statusForFilter = 'progress';
+        } else if (emergency.status === 'responded' || emergency.status === 'unsolved' || emergency.status === 'rejected') {
+            statusForFilter = 'resolved';
+        }
+        
+        // Check if type and status match filters
+        const typeMatch = typeFilters[typeName] !== undefined ? typeFilters[typeName] : true;
+        const statusMatch = statusFilters[statusForFilter];
+        
+        return typeMatch && statusMatch;
+    });
+    
+    renderEmergencies(filteredEmergencies);
+}
+
+// Add event listeners to filter checkboxes
+document.querySelectorAll('.filter-dropdown input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', applyFilters);
+});
+
+// Clear filters
+document.querySelector('.filter-dropdown .btn-outline-secondary').addEventListener('click', function() {
+    document.querySelectorAll('.filter-dropdown input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = checkbox.id.includes('Resolved') ? false : true;
+    });
+    applyFilters();
+});
+
+// Apply filters button
+document.querySelector('.filter-dropdown .btn-primary').addEventListener('click', function() {
+    applyFilters();
+    // Close dropdown
+    bootstrap.Dropdown.getInstance(document.querySelector('.dropdown-toggle')).hide();
+});
+
+// Auto-refresh alerts every 30 seconds
+setInterval(function() {
+    loadEmergencies();
+}, 30000);
+
+
+
+
+    </script>
+    <script>
+          // Web Audio API fallback for alarm sound
+        function createAlarmSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            function playBeep(frequency, duration) {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'square';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+            }
+            
+            // Create alarm pattern: beep-beep-beep
+            playBeep(800, 0.2);
+            setTimeout(() => playBeep(800, 0.2), 300);
+            setTimeout(() => playBeep(800, 0.2), 600);
+        }
+
+    </script>
+    <script>
+        // Dashboard JavaScript for NRDDMO Admin
+        class History {
+            constructor() {
+                this.emergencies = [];
+                this.lastPendingCount = 0; // Track previous count of pending emergencies
+                this.alarmSound = document.getElementById('alarmSound');
+                this.isInitialized = false;
+                this.init();
+            }
+
+            init() {
+                this.setupAudioContext();
+                this.loadEmergencies();
+                this.setupEventListeners();
+                
+                // Set up periodic checking for new emergencies
+                setInterval(() => {
+                    this.loadEmergencies();
+                }, 10000); // Check every 10 seconds
+                
+                this.isInitialized = true;
+            }
+
+            setupAudioContext() {
+                // Initialize audio context on first user interaction
+                document.addEventListener('click', this.initializeAudio.bind(this), { once: true });
+                document.addEventListener('touchstart', this.initializeAudio.bind(this), { once: true });
+            }
+
+            initializeAudio() {
+                if (this.alarmSound) {
+                    // Try to load and prepare the audio
+                    this.alarmSound.load();
+                    this.alarmSound.volume = 0.7;
+                    
+                    // Test if audio can play
+                    this.alarmSound.play().then(() => {
+                        this.alarmSound.pause();
+                        this.alarmSound.currentTime = 0;
+                        console.log('Audio initialized successfully');
+                    }).catch(error => {
+                        console.warn('Audio initialization failed:', error);
+                    });
+                }
+            }
+
+            async loadEmergencies() {
+                try {
+                    const response = await fetch('../../controllers/get_department_emergency.php');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const newEmergencies = result.data;
+                        
+                        // Check for new pending emergencies only after initialization
+                        if (this.isInitialized) {
+                            this.checkForNewPendingEmergencies(newEmergencies);
+                        }
+                        
+                        this.emergencies = newEmergencies;
+                        this.updateNotifications();
+                    } else {
+                        console.error('Error loading emergencies:', result.error);
+                        this.showToast('Error loading emergency data', 'error');
+                    }
+                } catch (error) {
+                    console.error('Network error:', error);
+                    this.showToast('Network error. Please check your connection.', 'error');
+                }
+            }
+
+            // Updated method to check for NEW approved emergencies
+            checkForNewPendingEmergencies(newEmergencies) {
+                const pendingEmergencies = newEmergencies.filter(e => e.status === 'approved' && e.emergency_type_id !== '3');
+                const currentPendingCount = pendingEmergencies.length;
+                
+                //console.log(`Previous pending: ${this.lastPendingCount}, Current pending: ${currentPendingCount}`);
+                 showAlert(`Current pending: ${currentPendingCount}`, 'warning');
+                
+                // Check if there are new pending emergencies
+                if (currentPendingCount > this.lastPendingCount) {
+                    console.log('New pending emergency detected! Triggering alarm...');
+                    this.triggerAlarm();
+                }
+                
+                // Update the count for next check
+                this.lastPendingCount = currentPendingCount;
+            }
+
+            // Enhanced alarm trigger method
+            triggerAlarm() {
+                console.log('Alarm triggered!');
+                
+                // Show visual indicator
+                this.showAlarmIndicator();
+                
+                // Try to play audio alarm
+                this.playAlarmSound();
+                
+                // Show toast notification
+                //this.showToast('🚨 New pending emergency detected!', 'warning');
+                
+                // Browser notification (if permitted)
+                this.showBrowserNotification();
+                
+                // Update notification badge
+                this.updateNotificationBadge(true);
+            }
+
+            showAlarmIndicator() {
+                const indicator = document.getElementById('alarmIndicator');
+                if (indicator) {
+                    indicator.style.display = 'block';
+                    
+                    // Auto-hide after 10 seconds
+                    setTimeout(() => {
+                        indicator.style.display = 'none';
+                    }, 3000);
+                }
+            }
+
+            playAlarmSound() {
+                if (this.alarmSound) {
+                    // Reset audio to beginning
+                    this.alarmSound.currentTime = 0;
+                    
+                    // Try to play the audio file
+                    const playPromise = this.alarmSound.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise
+                            .then(() => {
+                                console.log('Alarm sound played successfully');
+                            })
+                            .catch(error => {
+                                console.warn('Audio play failed, using fallback sound:', error);
+                                this.playFallbackAlarm();
+                            });
+                    } else {
+                        // Fallback for older browsers
+                        this.playFallbackAlarm();
+                    }
+                } else {
+                    // No audio element, use fallback
+                    this.playFallbackAlarm();
+                }
+            }
+
+            playFallbackAlarm() {
+                // Use Web Audio API to create alarm sound
+                try {
+                    createAlarmSound();
+                } catch (error) {
+                    console.warn('Fallback alarm failed:', error);
+                    // Last resort: system beep (browser dependent)
+                    console.log('\u0007'); // Bell character
+                }
+            }
+
+            showBrowserNotification() {
+                if ("Notification" in window) {
+                    if (Notification.permission === "granted") {
+                        new Notification("Emergency Alert", {
+                            body: "New pending emergency requires immediate attention!",
+                            icon: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjRkY0NDQ0Ii8+Cjwvc3ZnPgo=",
+                            tag: "emergency-alert",
+                            requireInteraction: true
+                        });
+                    } else if (Notification.permission !== "denied") {
+                        Notification.requestPermission().then(permission => {
+                            if (permission === "granted") {
+                                this.showBrowserNotification();
+                            }
+                        });
+                    }
+                }
+            }
+
+            updateNotificationBadge(show = false) {
+                const badge = document.getElementById('notificationBadge');
+                if (badge) {
+                    badge.style.display = show ? 'block' : 'none';
+                }
+            }
+
+            getEmergencyTypeFromTitle(title) {
+                const titleLower = title.toLowerCase();
+                if (titleLower.includes('fire')) {
+                    return 'fire';
+                } else if (titleLower.includes('accident') || titleLower.includes('car')) {
+                    return 'accident';
+                } else if (titleLower.includes('natural disaster') || titleLower.includes('disaster')) {
+                    return 'disaster';
+                }
+                return 'other';
+            }
+
+            getIconForType(type) {
+                const icons = {
+                    fire: 'local_fire_department',
+                    accident: 'car_crash',
+                    disaster: 'warning',
+                    other: 'report_problem'
+                };
+                return icons[type] || icons.other;
+            }
+
+            getIconColorForType(type) {
+                const colors = {
+                    fire: 'text-danger',
+                    accident: 'text-primary',
+                    disaster: 'text-warning',
+                    other: 'text-info'
+                };
+                return colors[type] || colors.other;
+            }
+
+            getStatusBadgeClass(status) {
+                const classes = {
+                    pending: 'bg-warning text-dark',
+                    resolved: 'bg-success',
+                    forwarded: 'bg-info'
+                };
+                return classes[status] || 'bg-secondary';
+            }
+
+            getTimeAgo(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / (1000 * 60));
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                if (diffMins < 1) {
+                    return 'Just now';
+                } else if (diffMins < 60) {
+                    return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+                } else if (diffHours < 24) {
+                    return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+                } else {
+                    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+                }
+            }
+
+            updateNotifications() {
+                const notificationContainer = document.querySelector('#notificationModal .list-group-flush');
+                if (!notificationContainer) return;
+
+                // Clear existing notifications
+                notificationContainer.innerHTML = '';
+
+                // Get recent pending emergencies for notifications
+                const pendingEmergencies = this.emergencies
+                    .filter(e => e.status === 'approved' &&  e.emergency_type_id !== '3')
+                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                    .slice(0, 5);
+
+                pendingEmergencies.forEach(emergency => {
+                    const notificationItem = this.createNotificationItem(emergency);
+                    notificationContainer.appendChild(notificationItem);
+                });
+
+                if (pendingEmergencies.length === 0) {
+                    const noNotificationItem = document.createElement('div');
+                    noNotificationItem.className = 'list-group-item text-center text-muted';
+                    noNotificationItem.innerHTML = '<p class="mb-0">No new notifications</p>';
+                    notificationContainer.appendChild(noNotificationItem);
+                }
+
+                // Update notification badge
+                this.updateNotificationBadge(pendingEmergencies.length > 0);
+            }
+
+            createNotificationItem(emergency) {
+                const item = document.createElement('div');
+                item.className = 'list-group-item d-flex align-items-start';
+                
+                const type = this.getEmergencyTypeFromTitle(emergency.title);
+                const icon = this.getIconForType(type);
+                const iconColor = this.getIconColorForType(type);
+                const timeAgo = this.getTimeAgo(emergency.created_at);
+
+                item.innerHTML = `
+                    <span class="material-symbols-outlined ${iconColor} me-2">${icon}</span>
+                    <div>
+                        <h6 class="mb-1">New ${type.charAt(0).toUpperCase() + type.slice(1)} Report</h6>
+                        <p class="mb-1 small">${emergency.title}</p>
+                        <small class="text-muted">${timeAgo}</small>
+                    </div>
+                `;
+
+                return item;
+            }
+
+            setupEventListeners() {
+                // Mark all notifications as read
+                const markAllReadBtn = document.querySelector('#notificationModal .btn-primary');
+                if (markAllReadBtn) {
+                    markAllReadBtn.addEventListener('click', () => {
+                        this.markAllNotificationsAsRead();
+                    });
+                }
+
+                // Logout functionality
+                const logoutBtn = document.querySelector('#logoutModal .btn-danger');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', () => {
+                        this.logout();
+                    });
+                }
+
+                // Request notification permission on page load
+                this.requestNotificationPermission();
+            }
+
+            requestNotificationPermission() {
+                if ("Notification" in window && Notification.permission === "default") {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === "granted") {
+                            console.log("Notification permission granted");
+                        } else {
+                            console.log("Notification permission denied");
+                        }
+                    });
+                }
+            }
+
+            markAllNotificationsAsRead() {
+                // Hide notification badge
+                this.updateNotificationBadge(false);
+
+                // Hide alarm indicator
+                const indicator = document.getElementById('alarmIndicator');
+                if (indicator) {
+                    indicator.style.display = 'none';
+                }
+
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.querySelector('#notificationModal'));
+                if (modal) {
+                    modal.hide();
+                }
+
+                this.showToast('All notifications marked as read', 'success');
+            }
+
+            logout() {
+                // You can implement actual logout logic here
+                window.location.href = '../../controllers/logout.php'; // Adjust path as needed
+            }
+
+            showToast(message, type = 'info') {
+                // Create a simple toast notification
+                const toast = document.createElement('div');
+                toast.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+                toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                toast.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+
+                document.body.appendChild(toast);
+
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 5000);
+            }
+        }
+
+        // Initialize history when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.historyInstance = new History();
+        });
+
+        // Check login status
+        
+        var is_logged_in = localStorage.getItem('is_logged_in');
+        if (!is_logged_in) {
+            window.location.href = '../../index.html?error=You are not logged in!';
+        }
+            
+    </script>
+</body>
+</html>
