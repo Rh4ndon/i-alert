@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Emergency Alert System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Open+Sans&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <link rel="stylesheet" href="view/user/assets/css/user_register.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-7">
+                <div class="card register-card">
+                    <div class="card-header register-header text-center py-4">
+                        <span class="material-symbols-outlined text-primary-600 emergency-icon mb-2">emergency</span>
+                        <h3 class="fw-bold mb-0">Create Account</h3>
+                        <p class="text-muted mb-0">Join the Emergency Alert System</p>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
+                        <!-- register form -->
+                        <form id="registerForm" >
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="firstName" class="form-label fw-semibold">First Name</label>
+                                        <input type="text" class="form-control" id="firstName" name="firstName" 
+                                               placeholder="Enter your first name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="lastName" class="form-label fw-semibold">Last Name</label>
+                                        <input type="text" class="form-control" id="lastName" name="lastName" 
+                                               placeholder="Enter your last name" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-semibold">Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       placeholder="Enter your email" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       placeholder="Enter your phone number" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="address" class="form-label fw-semibold">Address</label>
+                                <textarea class="form-control" id="address" name="address" rows="2" 
+                                          placeholder="Enter your full address" required></textarea>
+                            </div>
+
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3 position-relative">
+                                        <label for="password" class="form-label fw-semibold">Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-lock"></i>
+                                            </span>
+                                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                                            <button type="button" class="input-group-text" onclick="togglePassword('password')">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>  
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-4 position-relative">
+                                        <label for="confirmPassword" class="form-label fw-semibold">Confirm Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="bi bi-lock"></i>
+                                            </span>
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                                            <button type="button" class="input-group-text" onclick="togglePassword('confirmPassword')">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>  
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- end of register form-->
+                            
+                            <button type="submit"  class="btn-register btn btn-primary w-100 py-2 fw-bold btn-hover-effect">
+                                <span class="material-symbols-outlined me-2">person_add</span>
+                                Create Account
+                            </button>
+                            
+                            <div class="text-center mt-4">
+                                <p class="mb-0">Already have an account? 
+                                    <a href="index.html" class="text-primary-600 fw-semibold text-decoration-none">Sign in</a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="view/user/assets/js/show-alert.js"></script>
+    <script>
+        var is_logged_in = localStorage.getItem('is_logged_in');
+        if (is_logged_in) {
+            window.location.href = 'user.html?msg=You are already logged in';
+        }
+
+   function togglePassword(fieldId) {
+        const passwordInput = document.getElementById(fieldId);
+        const eyeIcon = event.currentTarget.querySelector('i');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.remove('bi-eye');
+            eyeIcon.classList.add('bi-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.remove('bi-eye-slash');
+            eyeIcon.classList.add('bi-eye');
+        }
+    }
+
+// Validation functions
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function validatePhone(phone) {
+    const phoneRegex = /^(\+63|63|0)?[0-9]{10}$/;
+    return phoneRegex.test(phone.replace(/\s+/g, ''));
+}
+
+function validatePassword(password) {
+    const requirements = {
+        length: password.length >= 8,
+        number: /\d/.test(password),
+        special: /[!_@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+    return requirements.length && requirements.number && requirements.special;
+}
+
+// Form submission
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Simulate registration process
+    simulateRegistration();
+});
+
+
+// Add real-time password confirmation validation
+document.getElementById('confirmPassword').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = this.value;
+    
+    if (confirmPassword.length > 0) {
+        if (password === confirmPassword) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        } else {
+            this.classList.remove('is-valid');
+            this.classList.add('is-invalid');
+        }
+    } else {
+        this.classList.remove('is-invalid', 'is-valid');
+    }
+});
+
+function simulateRegistration() {
+    // Show loading state
+    const registerBtn = document.querySelector('.btn-register');
+    const originalText = registerBtn.innerHTML;
+    registerBtn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Creating account...';
+    registerBtn.disabled = true;
+
+    // Send data to register.php
+    const formData = new FormData(document.getElementById('registerForm'));
+    
+    let password = formData.get('password');
+    let confirmPassword = formData.get('confirmPassword');
+    if (password !== confirmPassword) {
+        registerBtn.innerHTML = originalText;
+        registerBtn.disabled = false;
+        showAlert('Passwords do not match.', 'danger');
+        return;
+    }
+    
+    fetch('controllers/register.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(result => {
+        try {
+            const data = JSON.parse(result);
+            if (data.success) {show
+                // Optionally redirect after success
+                 setTimeout(() => {
+                     window.location.href = 'index.html?msg=Please login to continue';
+                 }, 2000);
+            } else if (data.error) {
+                showAlert(data.error, 'danger');
+            } else {
+                showAlert('Registration failed. Please try again.', 'danger');
+            }
+        } catch (e) {
+            // Fallback for non-JSON responses
+            if (result.toLowerCase().includes('success') || result.toLowerCase().includes('registered')) {
+                showAlert('Account created successfully.', 'success');
+                 setTimeout(() => {
+                     window.location.href = 'index.html?msg=Please login to continue';
+                 }, 2000);
+            } else {
+                showAlert(result, 'danger');
+            }
+        }
+        registerBtn.innerHTML = originalText;
+        registerBtn.disabled = false;
+    }
+    )
+    .catch(error => {
+        console.error('Registration error:', error);
+        showAlert('Registration failed. Please try again.', 'danger');
+        registerBtn.innerHTML = originalText;
+        registerBtn.disabled = false;
+    });
+}
+
+// Add spin animation for loading
+const style = document.createElement('style');
+style.textContent = `
+    .spin {
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .is-invalid {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+    .is-valid {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    }
+`;
+document.head.appendChild(style);
+
+    </script>
+</body>
+</html>

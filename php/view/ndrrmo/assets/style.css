@@ -1,0 +1,95 @@
+            :root {
+                --primary-color: #611bf8;
+                --primary-light: #7341ff;
+                --primary-dark: #4607d0;
+            }
+            
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Open Sans', sans-serif;
+                padding-bottom: 80px;
+            }
+            
+            .navbar {
+                background-color: var(--primary-color) !important;
+            }
+            
+            .btn-primary {
+                background-color: var(--primary-color);
+                border-color: var(--primary-color);
+            }
+            
+            .btn-primary:hover {
+                background-color: var(--primary-dark);
+                border-color: var(--primary-dark);
+            }
+            
+            .text-primary {
+                color: var(--primary-color) !important;
+            }
+            
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: white;
+                border-top: 1px solid #dee2e6;
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+                z-index: 1030;
+            }
+            
+            .nav-item {
+                flex: 1;
+                text-align: center;
+            }
+            
+            .nav-link {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 10px 5px;
+                text-decoration: none;
+                color: #6c757d;
+                transition: all 0.3s ease;
+            }
+            
+            .nav-link .material-symbols-outlined {
+                font-size: 24px;
+                margin-bottom: 4px;
+            }
+            
+            .nav-link span {
+                font-size: 12px;
+                font-weight: 500;
+            }
+            
+            .stats-card {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            
+            .stats-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            }
+            
+            .badge-fire { background-color: #dc3545; }
+            .badge-accident { background-color: #0d6efd; }
+            .badge-flood { background-color: #6f42c1; }
+            .badge-pending { background-color: #ffc107; }
+            .badge-resolved { background-color: #198754; }
+            .badge-forwarded { background-color: #20c997; }
+
+            .section {
+                padding-top: 20px;
+            }
+
+            .history-card {
+                background: white;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+                border: none;
+                margin-bottom: 1.5rem;
+                transition: all 0.3s ease;
+            }

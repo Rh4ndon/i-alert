@@ -1,0 +1,202 @@
+        :root {
+            --primary-50: #edf5ff;
+            --primary-100: #d7e8ff;
+            --primary-200: #b9d8ff;
+            --primary-300: #88c0ff;
+            --primary-400: #509eff;
+            --primary-500: #2876ff;
+            --primary-600: #1557ff;
+            --primary-700: #0a3eeb;
+            --primary-800: #0f33be;
+            --primary-900: #133195;
+            --primary-950: #11205a;
+            --primary-DEFAULT: #1557ff;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f8f9fa;
+            font-size: 16px;
+        }
+        
+        .bg-primary-600 {
+            background-color: var(--primary-600);
+        }
+        
+        .text-primary-600 {
+            color: var(--primary-600);
+        }
+        
+        .hover\:text-primary-700:hover {
+            color: var(--primary-700);
+        }
+        
+        .min-h-screen {
+            min-height: 100vh;
+        }
+        
+        .btn-hover-effect:hover {
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover-effect:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15) !important;
+            transition: all 0.3s ease;
+            transform: translateY(-2px);
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            height: 22px;
+            width: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 50rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .bg-amber-100 {
+            background-color: #fff3cd;
+        }
+        
+        .text-amber-800 {
+            color: #664d03;
+        }
+        
+        .bg-green-100 {
+            background-color: #d1e7dd;
+        }
+        
+        .text-green-800 {
+            color: #0f5132;
+        }
+
+        .emergency-icon {
+            font-size: 2.5rem !important;
+        }
+
+        .navbar-brand {
+            font-size: 1.3rem !important;
+        }
+
+        .emergency-btn {
+            min-height: 80px;
+        }
+
+        /* Mobile-first responsive design */
+        @media (max-width: 576px) {
+            body {
+                font-size: 14px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.1rem !important;
+            }
+            
+            .emergency-icon {
+                font-size: 2rem !important;
+            }
+            
+            .emergency-btn {
+                min-height: 70px;
+                font-size: 0.9rem;
+            }
+            
+            .btn-hover-effect:hover {
+                transform: none;
+            }
+            
+            .card-hover-effect:hover {
+                transform: none;
+            }
+            
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            .status-badge {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.6rem;
+            }
+            
+            .notification-badge {
+                height: 18px;
+                width: 18px;
+                font-size: 0.65rem;
+                top: -6px;
+                right: -6px;
+            }
+
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h3 {
+                font-size: 1.5rem;
+            }
+            
+            h4 {
+                font-size: 1.3rem;
+            }
+            
+            h5 {
+                font-size: 1.1rem;
+            }
+
+            .py-4 {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                max-width: 960px;
+            }
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e9ecef;
+            background-color: var(--primary-50);
+        }
+
+        .emergency-type-btn {
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .emergency-type-btn:hover,
+        .emergency-type-btn.selected {
+            border-color: var(--primary-600);
+            background-color: var(--primary-50);
+        }

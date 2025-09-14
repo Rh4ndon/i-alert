@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Section - NRDDMO Styled</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/profile.css">
+    <style>
+        /* Alarm indicator styles */
+        .alarm-indicator {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: linear-gradient(45deg, #ff4444, #ffaa00);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.4);
+            animation: pulse 1s infinite;
+            z-index: 9999;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .test-alarm-btn {
+            position: fixed;
+            top: 120px;
+            right: 20px;
+            z-index: 1000;
+            background: #28a745;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+      <!-- Alarm Indicator -->
+    <div id="alarmIndicator" class="alarm-indicator">
+        🚨 New Emergency Alert!
+    </div>
+
+
+         <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <a class="navbar-brand text-white fw-bold d-flex align-items-center" href="pnp.html">
+        <img src="assets/img/hospital.png" alt="Hospital Logo" width="32" height="40" class="me-2">
+        Hospital
+      </a>
+         <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                        <span class="material-symbols-outlined">logout</span>
+                    </button>
+    </div>
+  </nav>
+        
+    <div class="container">
+        <!-- Profile Section -->
+        <div id="profile" class="section">
+            <h3 class="h2 fw-bold text-dark mb-4 mt-2">Profile Settings</h3>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold me-3" 
+                             style="width: 80px; height: 80px; font-size: 1.5rem;">AD</div>
+                        <div>
+                            <h4 class="h3 mb-1">PNP Admin User</h4>
+                            <p class="text-muted mb-0">PNP Administrator</p>
+                        </div>
+                    </div>
+                    
+                    <form id="profileForm">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="first_name" id="first_name" class="form-control" >
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="last_name" id="last_name" class="form-control" value="User">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" id="email" class="form-control" value="admin@nrddmo.gov.ph">
+                            </div>
+                          
+                            <div class="col-md-6">
+                                <label class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your old or new password" required>
+                                    <button type="button" class="input-group-text" onclick="togglePassword('password')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div> 
+                            </div>
+                        </div>
+               
+                        
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+         <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav d-lg-none">
+        <div class="container-fluid">
+        <div class="d-flex justify-content-around">
+            <a href="emergency-alerts.html" class="nav-item">
+            <span class="material-symbols-outlined">crisis_alert</span>
+            <span>Alerts</span>
+            </a>
+         
+            <a href="history.html" class="nav-item">
+            <span class="material-symbols-outlined">history</span>
+            <span>History</span>
+            </a>
+            <a href="profile.html" class="nav-item active">
+            <span class="material-symbols-outlined">person</span>
+            <span>Profile</span>
+            </a>
+        </div>
+        </div>
+    </nav>
+
+         <!-- Notification Modal -->
+        <div class="modal fade" id="notificationModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Notifications</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex align-items-start">
+                                <span class="material-symbols-outlined text-danger me-2">local_fire_department</span>
+                                <div>
+                                    <h6 class="mb-1">New Fire Report</h6>
+                                    <p class="mb-1 small">Fire reported in Barangay 123</p>
+                                    <small class="text-muted">5 minutes ago</small>
+                                </div>
+                            </div>
+                            <div class="list-group-item d-flex align-items-start">
+                                <span class="material-symbols-outlined text-warning me-2">warning</span>
+                                <div>
+                                    <h6 class="mb-1">System Alert</h6>
+                                    <p class="mb-1 small">Server maintenance scheduled</p>
+                                    <small class="text-muted">1 hour ago</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Mark All Read</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Logout</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to logout?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <a href="../../controllers/logout.php" class="btn btn-danger">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+       <script src="assets/js/show-alert.js"></script>
+
+               <!-- Audio elements for alarm sounds -->
+    <audio id="alarmSound" preload="auto">
+        <source src="assets/alarm.mp3" type="audio/mpeg">
+        <source src="assets/alarm.wav" type="audio/wav">
+        <source src="assets/alarm.ogg" type="audio/ogg">
+        <!-- Fallback: Create alarm sound using Web Audio API if no files available -->
+    </audio>
+       <script>
+
+             // Global test function for alarm
+        function testAlarm() {
+            console.log('Testing alarm...');
+            if (window.historyInstance) {
+                window.historyInstance.triggerAlarm();
+            }
+        }
+
+         // Web Audio API fallback for alarm sound
+        function createAlarmSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            function playBeep(frequency, duration) {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = 'square';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+            }
+            
+            // Create alarm pattern: beep-beep-beep
+            playBeep(800, 0.2);
+            setTimeout(() => playBeep(800, 0.2), 300);
+            setTimeout(() => playBeep(800, 0.2), 600);
+        }
+               function togglePassword(fieldId) {
+                const passwordInput = document.getElementById(fieldId);
+                const eyeIcon = event.currentTarget.querySelector('i');
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeIcon.classList.remove('bi-eye');
+                    eyeIcon.classList.add('bi-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    eyeIcon.classList.remove('bi-eye-slash');
+                    eyeIcon.classList.add('bi-eye');
+                }
+            }
+
+
+            document.addEventListener('DOMContentLoaded', function() {
+                //set value get from locationStorage.get
+                const first_name = localStorage.getItem('first_name');
+                const last_name = localStorage.getItem('last_name');
+                const email = localStorage.getItem('email');
+
+                document.getElementById('first_name').value = first_name;
+                document.getElementById('last_name').value = last_name;
+                document.getElementById('email').value = email;
+            });
+
+// submit form
+
+            document.getElementById('profileForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                formData.append('userType', 'ndrrmo');
+                formData.append('userId', localStorage.getItem('user_id'));
+
+                fetch('../../controllers/update_profile.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    localStorage.setItem('first_name', data.first_name);
+                    localStorage.setItem('last_name', data.last_name);
+                    localStorage.setItem('email', data.email);
+                    showAlert('Profile updated successfully', 'success');
+                })
+                .catch(error => {
+                    console.error(error);
+                    showAlert('Error updating profile', 'danger');
+                });
+            });
+
+    
+             
+
+
+                class Report {
+  constructor() {
+                this.emergencies = [];
+                this.lastPendingCount = 0; // Track previous count of pending emergencies
+                this.alarmSound = document.getElementById('alarmSound');
+                this.isInitialized = false;
+                this.init();
+            }
+
+            init() {
+                this.setupAudioContext();
+                this.loadEmergencies();
+                this.setupEventListeners();
+                
+                // Set up periodic checking for new emergencies
+                setInterval(() => {
+                    this.loadEmergencies();
+                }, 10000); // Check every 10 seconds
+                
+                this.isInitialized = true;
+            }
+
+            setupAudioContext() {
+                // Initialize audio context on first user interaction
+                document.addEventListener('click', this.initializeAudio.bind(this), { once: true });
+                document.addEventListener('touchstart', this.initializeAudio.bind(this), { once: true });
+            }
+
+            initializeAudio() {
+                if (this.alarmSound) {
+                    // Try to load and prepare the audio
+                    this.alarmSound.load();
+                    this.alarmSound.volume = 0.7;
+                    
+                    // Test if audio can play
+                    this.alarmSound.play().then(() => {
+                        this.alarmSound.pause();
+                        this.alarmSound.currentTime = 0;
+                        console.log('Audio initialized successfully');
+                    }).catch(error => {
+                        console.warn('Audio initialization failed:', error);
+                    });
+                }
+            }
+
+            async loadEmergencies() {
+                try {
+                    const response = await fetch('../../controllers/get_department_emergency.php');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const newEmergencies = result.data;
+                        
+                        // Check for new pending emergencies only after initialization
+                        if (this.isInitialized) {
+                            this.checkForNewPendingEmergencies(newEmergencies);
+                        }
+                        
+                        this.emergencies = newEmergencies;
+                        this.updateNotifications();
+                    } else {
+                        console.error('Error loading emergencies:', result.error);
+                        this.showToast('Error loading emergency data', 'error');
+                    }
+                } catch (error) {
+                    console.error('Network error:', error);
+                    this.showToast('Network error. Please check your connection.', 'error');
+                }
+            }
+
+            // Updated method to check for NEW pending emergencies
+            checkForNewPendingEmergencies(newEmergencies) {
+                const pendingEmergencies = newEmergencies.filter(e => e.status === 'approved' &&  e.emergency_type_id !== '3');
+                const currentPendingCount = pendingEmergencies.length;
+                
+                //console.log(`Previous pending: ${this.lastPendingCount}, Current pending: ${currentPendingCount}`);
+                 showAlert(`Current pending: ${currentPendingCount}`, 'warning');
+                
+                // Check if there are new pending emergencies
+                if (currentPendingCount > this.lastPendingCount) {
+                    console.log('New pending emergency detected! Triggering alarm...');
+                    this.triggerAlarm();
+                }
+                
+                // Update the count for next check
+                this.lastPendingCount = currentPendingCount;
+            }
+
+            // Enhanced alarm trigger method
+            triggerAlarm() {
+                console.log('Alarm triggered!');
+                
+                // Show visual indicator
+                this.showAlarmIndicator();
+                
+                // Try to play audio alarm
+                this.playAlarmSound();
+                
+                // Show toast notification
+                //this.showToast('🚨 New pending emergency detected!', 'warning');
+                
+                // Browser notification (if permitted)
+                this.showBrowserNotification();
+                
+                // Update notification badge
+                this.updateNotificationBadge(true);
+            }
+
+            showAlarmIndicator() {
+                const indicator = document.getElementById('alarmIndicator');
+                if (indicator) {
+                    indicator.style.display = 'block';
+                    
+                    // Auto-hide after 10 seconds
+                    setTimeout(() => {
+                        indicator.style.display = 'none';
+                    }, 10000);
+                }
+            }
+
+            playAlarmSound() {
+                if (this.alarmSound) {
+                    // Reset audio to beginning
+                    this.alarmSound.currentTime = 0;
+                    
+                    // Try to play the audio file
+                    const playPromise = this.alarmSound.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise
+                            .then(() => {
+                                console.log('Alarm sound played successfully');
+                            })
+                            .catch(error => {
+                                console.warn('Audio play failed, using fallback sound:', error);
+                                this.playFallbackAlarm();
+                            });
+                    } else {
+                        // Fallback for older browsers
+                        this.playFallbackAlarm();
+                    }
+                } else {
+                    // No audio element, use fallback
+                    this.playFallbackAlarm();
+                }
+            }
+
+            playFallbackAlarm() {
+                // Use Web Audio API to create alarm sound
+                try {
+                    createAlarmSound();
+                } catch (error) {
+                    console.warn('Fallback alarm failed:', error);
+                    // Last resort: system beep (browser dependent)
+                    console.log('\u0007'); // Bell character
+                }
+            }
+
+            showBrowserNotification() {
+                if ("Notification" in window) {
+                    if (Notification.permission === "granted") {
+                        new Notification("Emergency Alert", {
+                            body: "New pending emergency requires immediate attention!",
+                            icon: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSIjRkY0NDQ0Ii8+Cjwvc3ZnPgo=",
+                            tag: "emergency-alert",
+                            requireInteraction: true
+                        });
+                    } else if (Notification.permission !== "denied") {
+                        Notification.requestPermission().then(permission => {
+                            if (permission === "granted") {
+                                this.showBrowserNotification();
+                            }
+                        });
+                    }
+                }
+            }
+
+            updateNotificationBadge(show = false) {
+                const badge = document.getElementById('notificationBadge');
+                if (badge) {
+                    badge.style.display = show ? 'block' : 'none';
+                }
+            }
+
+            getEmergencyTypeFromTitle(title) {
+                const titleLower = title.toLowerCase();
+                if (titleLower.includes('fire')) {
+                    return 'fire';
+                } else if (titleLower.includes('accident') || titleLower.includes('car')) {
+                    return 'accident';
+                } else if (titleLower.includes('natural disaster') || titleLower.includes('disaster')) {
+                    return 'disaster';
+                }
+                return 'other';
+            }
+
+            getIconForType(type) {
+                const icons = {
+                    fire: 'local_fire_department',
+                    accident: 'car_crash',
+                    disaster: 'warning',
+                    other: 'report_problem'
+                };
+                return icons[type] || icons.other;
+            }
+
+            getIconColorForType(type) {
+                const colors = {
+                    fire: 'text-danger',
+                    accident: 'text-primary',
+                    disaster: 'text-warning',
+                    other: 'text-info'
+                };
+                return colors[type] || colors.other;
+            }
+
+            getStatusBadgeClass(status) {
+                const classes = {
+                    pending: 'bg-warning text-dark',
+                    resolved: 'bg-success',
+                    forwarded: 'bg-info'
+                };
+                return classes[status] || 'bg-secondary';
+            }
+
+            getTimeAgo(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / (1000 * 60));
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                if (diffMins < 1) {
+                    return 'Just now';
+                } else if (diffMins < 60) {
+                    return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+                } else if (diffHours < 24) {
+                    return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+                } else {
+                    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+                }
+            }
+
+            updateNotifications() {
+                const notificationContainer = document.querySelector('#notificationModal .list-group-flush');
+                if (!notificationContainer) return;
+
+                // Clear existing notifications
+                notificationContainer.innerHTML = '';
+
+                // Get recent pending emergencies for notifications
+                const pendingEmergencies = this.emergencies
+                    .filter(e => e.status === 'pending' || e.status === 'on_going' || e.status === 'approved')
+                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                    .slice(0, 5);
+
+                pendingEmergencies.forEach(emergency => {
+                    const notificationItem = this.createNotificationItem(emergency);
+                    notificationContainer.appendChild(notificationItem);
+                });
+
+                if (pendingEmergencies.length === 0) {
+                    const noNotificationItem = document.createElement('div');
+                    noNotificationItem.className = 'list-group-item text-center text-muted';
+                    noNotificationItem.innerHTML = '<p class="mb-0">No new notifications</p>';
+                    notificationContainer.appendChild(noNotificationItem);
+                }
+
+                // Update notification badge
+                this.updateNotificationBadge(pendingEmergencies.length > 0);
+            }
+
+            createNotificationItem(emergency) {
+                const item = document.createElement('div');
+                item.className = 'list-group-item d-flex align-items-start';
+                
+                const type = this.getEmergencyTypeFromTitle(emergency.title);
+                const icon = this.getIconForType(type);
+                const iconColor = this.getIconColorForType(type);
+                const timeAgo = this.getTimeAgo(emergency.created_at);
+
+                item.innerHTML = `
+                    <span class="material-symbols-outlined ${iconColor} me-2">${icon}</span>
+                    <div>
+                        <h6 class="mb-1">New ${type.charAt(0).toUpperCase() + type.slice(1)} Report</h6>
+                        <p class="mb-1 small">${emergency.title}</p>
+                        <small class="text-muted">${timeAgo}</small>
+                    </div>
+                `;
+
+                return item;
+            }
+
+            setupEventListeners() {
+                // Mark all notifications as read
+                const markAllReadBtn = document.querySelector('#notificationModal .btn-primary');
+                if (markAllReadBtn) {
+                    markAllReadBtn.addEventListener('click', () => {
+                        this.markAllNotificationsAsRead();
+                    });
+                }
+
+                // Logout functionality
+                const logoutBtn = document.querySelector('#logoutModal .btn-danger');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', () => {
+                        this.logout();
+                    });
+                }
+
+                // Request notification permission on page load
+                this.requestNotificationPermission();
+            }
+
+            requestNotificationPermission() {
+                if ("Notification" in window && Notification.permission === "default") {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === "granted") {
+                            console.log("Notification permission granted");
+                        } else {
+                            console.log("Notification permission denied");
+                        }
+                    });
+                }
+            }
+
+            markAllNotificationsAsRead() {
+                // Hide notification badge
+                this.updateNotificationBadge(false);
+
+                // Hide alarm indicator
+                const indicator = document.getElementById('alarmIndicator');
+                if (indicator) {
+                    indicator.style.display = 'none';
+                }
+
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.querySelector('#notificationModal'));
+                if (modal) {
+                    modal.hide();
+                }
+
+                this.showToast('All notifications marked as read', 'success');
+            }
+
+            logout() {
+                // You can implement actual logout logic here
+                window.location.href = '../../controllers/logout.php'; // Adjust path as needed
+            }
+
+            showToast(message, type = 'info') {
+                // Create a simple toast notification
+                const toast = document.createElement('div');
+                toast.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+                toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                toast.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+
+                document.body.appendChild(toast);
+
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 5000);
+            }
+}
+
+// Initialize report when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new Report();
+});
+  var is_logged_in = localStorage.getItem('is_logged_in');
+                if (!is_logged_in) {
+                    window.location.href = '../../index.html?error=You are not logged in!';
+                }
+       </script>
+</body>
+</html>
